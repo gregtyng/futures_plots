@@ -1,0 +1,60 @@
+import eikon as ek
+import matplotlib.pyplot as plt
+import pandas as pd
+ek.set_app_key('yourkey')
+
+##Contract cutoff date
+maskdate = ("2021-3-31")
+
+##Contract RIC reference
+contract = '0#1CB:'
+## 0#1CB: 0#NF: 0#CSC: 0#DWY: 0#DCS: 0#C: 0#S: 0#AA5G: 0#SFS:
+
+##Retrieve futures contract names and expiry months
+df, list=ek.get_data(contract,['EXPIR_DATE'])
+df.columns = ['RIC','EXP']
+mask = (df['EXP'] <= (maskdate))
+df = df.loc[mask]
+print(df)
+
+##Make list of RICs to pass to timeseries call
+ricseries = df['RIC']
+riclist = ricseries.tolist()
+
+##Retrieve historical futures quotations
+df2 = ek.get_timeseries(riclist,'close',
+                        start_date='2021-01-25',
+                        end_date='2021-01-29', interval='daily')
+
+df2.columns = df['EXP']
+df2.index = df2.index.date
+print(df2)
+
+#Plot using OO Method
+fig, ax = plt.subplots(figsize=(15,10))
+plt.title('Butter: 2021 Forward Curves - 5-day history', size=20)
+
+##Plots and formatting
+ax.plot(df2.iloc[0,0:], color='k', linewidth=1, marker='.')
+ax.plot(df2.iloc[1,0:], color='r', linewidth=2, marker='x')
+ax.plot(df2.iloc[2,0:], color='b', linewidth=3, marker='v')
+ax.plot(df2.iloc[3,0:], color='g', linewidth=4, marker='s')
+ax.plot(df2.iloc[4,0:], color='c', linewidth=3, marker='^')
+#ax.plot(df2.iloc[5,1:], color='m', linewidth=3, marker='*')
+#ax.plot(df2.iloc[6,1:], color='y', linewidth=3, marker='o')
+ax.set_xlabel('Contract', size=20)
+ax.set_ylabel('cents/lb', size=20)
+ax.legend()
+ax.xaxis.grid(True, 'major', linewidth=1)
+ax.yaxis.grid(True, 'major', linewidth=1)
+fig.autofmt_xdate()
+plt.show()
+
+#Output df to XLSX
+#dft = df2
+#writer = pd.ExcelWriter('Futures Plot.xlsx')
+#dft.to_excel(writer,'Table')
+#writer.save()
+
+#Save plot
+#fig.savefig("myplot.png", dpi = 150, bbox_inches='tight')
