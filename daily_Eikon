@@ -4,7 +4,7 @@ import pandas as pd
 ek.set_app_key('yourkey')
 
 ##Contract cutoff date
-maskdate = ("2021-3-31")
+maskdate = ("2022-01-30")
 
 ##Contract RIC reference
 contract = '0#1CB:'
