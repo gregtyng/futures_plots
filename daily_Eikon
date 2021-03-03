@@ -24,7 +24,7 @@ riclist = ricseries.tolist()
 df2 = pd.DataFrame()
 
 ##Retrieve historical futures quotations
-df2 = ek.get_timeseries(riclist,'open',
+df2 = ek.get_timeseries(riclist,'close',
                         start_date='2021-02-10',
                         end_date='2021-02-17', interval='daily')
 
